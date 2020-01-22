@@ -1,6 +1,8 @@
 #include <foo.h>
-#include <foo_extend.h>
 
+#ifdef HAVE_FOO_EXTEND
+#include <foo_extend.h>
+#endif
 
 int main()
 {

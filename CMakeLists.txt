@@ -40,6 +40,7 @@ target_compile_options(foo PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(foo PRIVATE cxx_std_17)
+target_compile_definitions(foo INTERFACE HAVE_FOO)
 list(APPEND _libs foo)
 
 if(NOT MSVC)
@@ -56,6 +57,7 @@ target_compile_options(foo_extend PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(foo_extend PRIVATE cxx_std_17)
+target_compile_definitions(foo INTERFACE HAVE_FOO_EXTEND)
 list(APPEND _libs foo_extend)
 
 
@@ -72,6 +74,7 @@ target_compile_options(foo_hack PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(foo_hack PRIVATE cxx_std_17)
+target_compile_definitions(foo INTERFACE HAVE_FOO_HACK)
 list(APPEND _libs foo_hack)
 
 
@@ -88,6 +91,7 @@ target_compile_options(bar PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(bar PRIVATE cxx_std_17)
+target_compile_definitions(foo INTERFACE HAVE_BAR)
 list(APPEND _libs bar)
 
 endif()
@@ -105,6 +109,7 @@ target_compile_options(zot PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(zot PRIVATE cxx_std_17)
+target_compile_definitions(foo INTERFACE HAVE_ZOT)
 list(APPEND _libs zot)
 
 
