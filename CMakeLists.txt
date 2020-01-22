@@ -111,4 +111,5 @@ target_compile_features(main PRIVATE cxx_std_17)
 
 enable_testing()
 
-add_test(main_test main)
+add_test(NAME main_test
+         COMMAND main)
