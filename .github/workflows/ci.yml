@@ -1,0 +1,142 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: '[${{ matrix.config.project_tags }}@${{ matrix.config.os }}@${{ matrix.config.build_type }}]'
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Windows Latest MSVC",
+            artifact: "",
+            os: windows-2019,
+            project_tags: "Unstable",
+            build_type: "Release",
+            cc: "cl",
+            cxx: "cl",
+            cmake_generator: "Visual Studio 16 2019",
+            cmake_toolset: "v142",
+            cmake_platform: "x64",
+            cmake_toolchain_file: "C:/vcpkg-robotology/scripts/buildsystems/vcpkg.cmake",
+            cmake_initial_cache_file: "",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+          }
+        - {
+            name: "Ubuntu Latest GCC",
+            artifact: "",
+            os: ubuntu-latest,
+            project_tags: "Unstable",
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_toolset: "",
+            cmake_platform: "",
+            cmake_toolchain_file: "",
+            cmake_initial_cache_file: "",
+            environment_script: ""
+          }
+        - {
+            name: "Ubuntu Latest Clang",
+            artifact: "",
+            os: ubuntu-latest,
+            project_tags: "Unstable",
+            build_type: "Release",
+            cc: "clang",
+            cxx: "clang++",
+            cmake_generator: "Unix Makefiles",
+            cmake_toolset: "",
+            cmake_platform: "",
+            cmake_toolchain_file: "",
+            cmake_initial_cache_file: "",
+            environment_script: ""
+          }
+
+    steps:
+    - uses: actions/checkout@master
+
+    # Print environment variables to simplify development and debugging
+    - name: Environment Variables
+      shell: bash
+      run: env
+
+    - name: Configure
+      shell: cmake -P {0}
+      run: |
+        set(ENV{CC} ${{ matrix.config.cc }})
+        set(ENV{CXX} ${{ matrix.config.cxx }})
+
+        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
+        execute_process(
+            COMMAND "${{ matrix.config.environment_script }}" && set
+            OUTPUT_FILE environment_script_output.txt
+        )
+        file(STRINGS environment_script_output.txt output_lines)
+        foreach(line IN LISTS output_lines)
+            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+                message("Setting ${CMAKE_MATCH_1} = ${CMAKE_MATCH_2}")
+                set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
+            endif()
+        endforeach()
+        endif()
+
+        execute_process(
+          COMMAND ${CMAKE_COMMAND}
+            -S .
+            -B build
+            -G "${{ matrix.config.cmake_generator }}"
+            -T ${{ matrix.config.cmake_toolset }}
+            -A ${{ matrix.config.cmake_platform }}
+            -C "${{ matrix.config.cmake_initial_cache_file }}"
+            -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }}
+            -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+            -D YARP_COMPILE_TESTS:BOOL=ON
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+        message(FATAL_ERROR "Bad exit status")
+        endif()
+
+    - name: Build
+      shell: cmake -P {0}
+      run: |
+        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
+          file(STRINGS environment_script_output.txt output_lines)
+          foreach(line IN LISTS output_lines)
+            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+              set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
+            endif()
+          endforeach()
+        endif()
+
+        execute_process(
+          COMMAND ${CMAKE_COMMAND}
+            --build build
+            --config ${{ matrix.config.build_type }}
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+
+    - name: Run tests
+      shell: cmake -P {0}
+      run: |
+        execute_process(
+          COMMAND ${CMAKE_CTEST_COMMAND}
+            --build-config ${{ matrix.config.build_type }}
+            --output-on-failure
+          WORKING_DIRECTORY build
+          RESULT_VARIABLE result
+        )
+        if(NOT result EQUAL 0)
+          message(FATAL_ERROR "Running tests failed!")
+        endif()
