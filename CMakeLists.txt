@@ -82,3 +82,8 @@ target_sources(main PRIVATE main.cpp)
 target_link_libraries(main PRIVATE foo bar zot foo_extend foo_hack)
 target_compile_options(main PRIVATE -Wall -Wextra -fdiagnostics-color=always)
 target_compile_features(main PRIVATE cxx_std_17)
+
+
+enable_testing()
+
+add_test(main_test main)
