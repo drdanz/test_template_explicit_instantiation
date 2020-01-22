@@ -77,8 +77,7 @@ jobs:
 
           foreach(line IN LISTS output_lines)
             if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              file(APPEND "${_env_script}" "set(ENV{${CMAKE_MATCH_1} } \"${CMAKE_MATCH_2}\"\n")
-
+              file(APPEND "${_env_script}" "set(ENV{${CMAKE_MATCH_1}} \"${CMAKE_MATCH_2}\"\n")
             endif()
           endforeach()
         endif()
