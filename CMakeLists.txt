@@ -130,4 +130,5 @@ if(NOT MSVC)
 foreach(_lib IN LISTS _libs)
   add_test(NAME nm_${_lib}
            COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/lib${_lib}.so)
+endforeach()
 endif()
