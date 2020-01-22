@@ -61,8 +61,6 @@ jobs:
           }
 
     steps:
-    - uses: actions/checkout@master
-
     - name: Prepare Environment Script
       shell: cmake -P {0}
       run: |
@@ -77,8 +75,8 @@ jobs:
 
           foreach(line IN LISTS output_lines)
             if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              set(_key ${CMAKE_MATCH_1})
-              set(_value ${CMAKE_MATCH_2})
+              set(_key "${CMAKE_MATCH_1}")
+              set(_value "${CMAKE_MATCH_2}")
               string(REPLACE "\" "\\" _value "${_value}")
               file(APPEND "${_env_script}" "set(ENV{${_key}} \"${_value}\")\n")
             endif()
@@ -95,6 +93,8 @@ jobs:
     - name: Environment Variables
       shell: bash
       run: env
+
+    - uses: actions/checkout@master
 
     - name: Configure
       shell: cmake -P {0}
