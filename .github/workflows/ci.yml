@@ -63,11 +63,6 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    # Print environment variables to simplify development and debugging
-    - name: Environment Variables
-      shell: bash
-      run: env
-
     - name: Prepare Environment Script
       shell: cmake -P {0}
       run: |
@@ -81,13 +76,18 @@ jobs:
 
           foreach(line IN LISTS output_lines)
             if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              file(APPEND environment_script.cmake "set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}\n")"
+              file(APPEND environment_script.cmake "set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}\n")")
             endif()
           endforeach()
         endif()
 
         file(APPEND environment_script.cmake "set(ENV{CC} ${{ matrix.config.cc }})\n")
         file(APPEND environment_script.cmake "set(ENV{CXX} ${{ matrix.config.cxx }})\n")
+
+    # Print environment variables to simplify development and debugging
+    - name: Environment Variables
+      shell: bash
+      run: env
 
     - name: Configure
       shell: cmake -P {0}
