@@ -114,4 +114,7 @@ target_compile_features(main PRIVATE cxx_std_17)
 add_test(NAME main_test
          COMMAND main)
 
+add_test(NAME nm
+         COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/lib*.so)
+
 endif()
