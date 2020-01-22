@@ -123,6 +123,7 @@ add_test(NAME main_test
          COMMAND main)
 
 if(NOT MSVC)
-add_test(NAME nm
-         COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/*.so)
+foreach(_lib IN LISTS _libs)
+  add_test(NAME nm_${_lib}
+           COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/lib${_lib}.so)
 endif()
