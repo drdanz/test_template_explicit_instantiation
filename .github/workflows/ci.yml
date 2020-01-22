@@ -83,8 +83,8 @@ jobs:
           endforeach()
         endif()
 
-        file(APPEND "set(ENV{CC} ${{ matrix.config.cc }})\n")
-        file(APPEND ${_env_script} "set(ENV{CXX} ${{ matrix.config.cxx }})\n")
+        file(APPEND "${_env_script}" "set(ENV{CC} ${{ matrix.config.cc }})\n")
+        file(APPEND "${_env_script}" "set(ENV{CXX} ${{ matrix.config.cxx }})\n")
 
         file(READ ${_env_script} _out)
         message("\n\n------\n${_out}------\n")
