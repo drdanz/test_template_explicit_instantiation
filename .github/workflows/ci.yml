@@ -67,7 +67,7 @@ jobs:
       shell: cmake -P {0}
       run: |
         set(_env_script environment_script.cmake)
-        file(WRITE ${_env_script} "")
+        file(WRITE "${_env_script}" "")
         if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
           execute_process(
               COMMAND "${{ matrix.config.environment_script }}" && set
@@ -77,7 +77,7 @@ jobs:
 
           foreach(line IN LISTS output_lines)
             if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              file(APPEND ${_env_script} "set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}\n")")
+              file(APPEND "${_env_script}" "set(ENV{${CMAKE_MATCH_1} } \"${CMAKE_MATCH_2}\n\")")
             endif()
           endforeach()
         endif()
