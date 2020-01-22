@@ -128,7 +128,6 @@ jobs:
             ${_initial_cache_file}
             ${_toolchain_file}
             ${_build_type}
-            -D YARP_COMPILE_TESTS:BOOL=ON
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
