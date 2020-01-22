@@ -11,10 +11,12 @@ int main()
     fd.foo2();
     fd.foo3();
 
+#ifdef HAVE_FOO_EXTEND
     Foo<long int> fli(1);
     fli.foo1();
     fli.foo2();
     fli.foo3();
+#endif
 
     Foo<int> fi(1);
     fi.foo1();
