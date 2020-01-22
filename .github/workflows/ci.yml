@@ -105,7 +105,7 @@ jobs:
 
         set(_initial_cache_file)
         if(NOT "${{ matrix.config.cmake_initial_cache_file }}" STREQUAL "")
-          set(_initial_cache_file -C "${{ matrix.config.cmake_initial_cache_file }}"
+          set(_initial_cache_file -C "${{ matrix.config.cmake_initial_cache_file }}")
         endif()
 
         set(_toolchain_file)
