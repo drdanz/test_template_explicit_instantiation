@@ -77,7 +77,7 @@ jobs:
             if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
               set(_key "${CMAKE_MATCH_1}")
               set(_value "${CMAKE_MATCH_2}")
-              string(REPLACE "\" "\\" _value "${_value}")
+              string(REPLACE "\\" "\\\\" _value "${_value}")
               file(APPEND "${_env_script}" "set(ENV{${_key}} \"${_value}\")\n")
             endif()
           endforeach()
