@@ -24,6 +24,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 enable_testing()
 
 
+set(_libs)
+
+
 add_library(foo SHARED)
 generate_export_header(foo)
 target_sources(foo PRIVATE foo.h
@@ -36,10 +39,10 @@ target_compile_options(foo PRIVATE
           -Wall -Wextra -fdiagnostics-color=always>
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
-
 target_compile_features(foo PRIVATE cxx_std_17)
+list(APPEND _libs foo)
 
-
+if(NOT MSVC)
 add_library(foo_extend SHARED)
 generate_export_header(foo_extend)
 target_sources(foo_extend PRIVATE foo_extend.h
@@ -53,6 +56,7 @@ target_compile_options(foo_extend PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(foo_extend PRIVATE cxx_std_17)
+list(APPEND _libs foo_extend)
 
 
 add_library(foo_hack SHARED)
@@ -68,6 +72,8 @@ target_compile_options(foo_hack PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(foo_hack PRIVATE cxx_std_17)
+list(APPEND _libs foo_hack)
+endif()
 
 
 add_library(bar SHARED)
@@ -83,8 +89,9 @@ target_compile_options(bar PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(bar PRIVATE cxx_std_17)
+list(APPEND _libs bar)
 
-if (NOT MSVC)
+
 
 add_library(zot SHARED)
 generate_export_header(zot)
@@ -99,11 +106,12 @@ target_compile_options(zot PRIVATE
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 target_compile_features(zot PRIVATE cxx_std_17)
+list(APPEND _libs zot)
 
 
 add_executable(main)
 target_sources(main PRIVATE main.cpp)
-target_link_libraries(main PRIVATE foo bar zot foo_extend foo_hack)
+target_link_libraries(main PRIVATE ${_libs})
 target_compile_options(main PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
           -Wall -Wextra -fdiagnostics-color=always>
@@ -114,7 +122,7 @@ target_compile_features(main PRIVATE cxx_std_17)
 add_test(NAME main_test
          COMMAND main)
 
+if(NOT MSVC)
 add_test(NAME nm
          COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/*.so)
-
 endif()
