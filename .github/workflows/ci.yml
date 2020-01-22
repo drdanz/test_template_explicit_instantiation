@@ -164,9 +164,12 @@ jobs:
           foreach(line IN LISTS output_lines)
             if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
               set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
+              message("Setting ${CMAKE_MATCH_1} = ${CMAKE_MATCH_2}")
             endif()
           endforeach()
         endif()
+
+        message("PATH=$ENV{PATH}")
 
         execute_process(
           COMMAND ${CMAKE_CTEST_COMMAND}
