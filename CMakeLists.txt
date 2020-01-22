@@ -126,9 +126,12 @@ target_compile_features(main PRIVATE cxx_std_17)
 add_test(NAME main_test
          COMMAND main)
 
-if(NOT MSVC)
 foreach(_lib IN LISTS _libs)
-  add_test(NAME nm_${_lib}
-           COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/lib${_lib}.so)
+  if(MSVC)
+    add_test(NAME dumpbin::${_lib}
+             COMMAND dumpbin /SYMBOLS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${_lib}.dll)
+  else()
+    add_test(NAME nm::${_lib}
+             COMMAND nm -ACD --defined-only ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib${_lib}.so)
+  endif()
 endforeach()
-endif()
