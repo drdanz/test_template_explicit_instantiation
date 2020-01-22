@@ -116,6 +116,8 @@ jobs:
         set(_build_type)
         if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
           set(build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
+        endif()
+
         execute_process(
           COMMAND ${CMAKE_COMMAND}
             -S .
