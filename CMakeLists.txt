@@ -69,7 +69,6 @@ target_compile_options(foo_hack PRIVATE
           /W4>)
 target_compile_features(foo_hack PRIVATE cxx_std_17)
 
-if (NOT MSVC)
 
 add_library(bar SHARED)
 generate_export_header(bar)
@@ -85,6 +84,7 @@ target_compile_options(bar PRIVATE
           /W4>)
 target_compile_features(bar PRIVATE cxx_std_17)
 
+if (NOT MSVC)
 
 add_library(zot SHARED)
 generate_export_header(zot)
