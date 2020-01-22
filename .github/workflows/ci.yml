@@ -25,7 +25,7 @@ jobs:
             cmake_generator: "Visual Studio 16 2019",
             cmake_toolset: "v142",
             cmake_platform: "x64",
-            cmake_toolchain_file: "C:/vcpkg-robotology/scripts/buildsystems/vcpkg.cmake",
+            cmake_toolchain_file: "",
             cmake_initial_cache_file: "",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
