@@ -68,29 +68,31 @@ jobs:
       shell: bash
       run: env
 
-    - name: Environment Script
-      shell: bash
-      run: cat "${{ matrix.config.environment_script }}"
+    - name: Prepare Environment Script
+      shell: cmake -P {0}
+      run: |
+        file(WRITE environment_script.cmake "")
+        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
+          execute_process(
+              COMMAND "${{ matrix.config.environment_script }}" && set
+              OUTPUT_FILE environment_script_output.txt
+          )
+          file(STRINGS environment_script_output.txt output_lines)
+
+          foreach(line IN LISTS output_lines)
+            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+              file(APPEND environment_script.cmake "set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}\n")"
+            endif()
+          endforeach()
+        endif()
+
+        file(APPEND environment_script.cmake "set(ENV{CC} ${{ matrix.config.cc }})\n")
+        file(APPEND environment_script.cmake "set(ENV{CXX} ${{ matrix.config.cxx }})\n")
 
     - name: Configure
       shell: cmake -P {0}
       run: |
-        set(ENV{CC} ${{ matrix.config.cc }})
-        set(ENV{CXX} ${{ matrix.config.cxx }})
-
-        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
-        execute_process(
-            COMMAND "${{ matrix.config.environment_script }}" && set
-            OUTPUT_FILE environment_script_output.txt
-        )
-        file(STRINGS environment_script_output.txt output_lines)
-        foreach(line IN LISTS output_lines)
-            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-                message("Setting ${CMAKE_MATCH_1} = ${CMAKE_MATCH_2}")
-                set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
-            endif()
-        endforeach()
-        endif()
+        include(environment_script.cmake)
 
         set(_generator)
         if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
@@ -141,14 +143,7 @@ jobs:
     - name: Build
       shell: cmake -P {0}
       run: |
-        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
-          file(STRINGS environment_script_output.txt output_lines)
-          foreach(line IN LISTS output_lines)
-            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
-            endif()
-          endforeach()
-        endif()
+        include(environment_script.cmake)
 
         execute_process(
           COMMAND ${CMAKE_COMMAND}
@@ -163,15 +158,7 @@ jobs:
     - name: Run tests
       shell: cmake -P {0}
       run: |
-        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
-          file(STRINGS environment_script_output.txt output_lines)
-          foreach(line IN LISTS output_lines)
-            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
-              message("Setting ${CMAKE_MATCH_1} = ${CMAKE_MATCH_2}")
-            endif()
-          endforeach()
-        endif()
+        include(environment_script.cmake)
 
         message("PATH=$ENV{PATH}")
 
