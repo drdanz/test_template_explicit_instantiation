@@ -73,7 +73,6 @@ target_compile_options(foo_hack PRIVATE
           /W4>)
 target_compile_features(foo_hack PRIVATE cxx_std_17)
 list(APPEND _libs foo_hack)
-endif()
 
 
 add_library(bar SHARED)
@@ -91,6 +90,7 @@ target_compile_options(bar PRIVATE
 target_compile_features(bar PRIVATE cxx_std_17)
 list(APPEND _libs bar)
 
+endif()
 
 
 add_library(zot SHARED)
