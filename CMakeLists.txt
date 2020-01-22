@@ -115,6 +115,6 @@ add_test(NAME main_test
          COMMAND main)
 
 add_test(NAME nm
-         COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/lib*.so)
+         COMMAND nm -ACD --defined-only ${CMAKE_CURRENT_BINARY_DIR}/lib/*.so)
 
 endif()
