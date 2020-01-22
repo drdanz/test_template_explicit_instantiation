@@ -160,7 +160,8 @@ jobs:
       shell: cmake -P {0}
       run: |
         execute_process(
-          COMMAND ${CMAKE_CTEST_COMMAND} "ARGS=-VV"
+          COMMAND ${CMAKE_CTEST_COMMAND}
+            -VV
             --build-config ${{ matrix.config.build_type }}
             --output-on-failure
           WORKING_DIRECTORY build
