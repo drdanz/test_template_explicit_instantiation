@@ -97,7 +97,6 @@ add_library(zot SHARED)
 generate_export_header(zot)
 target_sources(zot PRIVATE zot.h
                            zot.cpp)
-target_link_libraries(zot PUBLIC foo bar)
 target_include_directories(zot PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(zot PRIVATE
