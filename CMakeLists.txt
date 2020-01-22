@@ -6,6 +6,7 @@ project(test_template_explicit_instantiation
 
 
 include(GNUInstallDirs)
+include(GenerateExportHeader)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
@@ -20,7 +21,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(GenerateExportHeader)
+enable_testing()
+
 
 add_library(foo SHARED)
 generate_export_header(foo)
@@ -37,6 +39,7 @@ target_compile_options(foo PRIVATE
 
 target_compile_features(foo PRIVATE cxx_std_17)
 
+if (NOT MSVC)
 
 add_library(foo_extend SHARED)
 generate_export_header(foo_extend)
@@ -108,8 +111,7 @@ target_compile_options(main PRIVATE
           /W4>)
 target_compile_features(main PRIVATE cxx_std_17)
 
-
-enable_testing()
-
 add_test(NAME main_test
          COMMAND main)
+
+endif()
