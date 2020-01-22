@@ -123,9 +123,6 @@ target_compile_options(main PRIVATE
           /W4>)
 target_compile_features(main PRIVATE cxx_std_17)
 
-add_test(NAME main_test
-         COMMAND main)
-
 foreach(_lib IN LISTS _libs)
   if(MSVC)
     add_test(NAME dumpbin::${_lib}
@@ -135,3 +132,6 @@ foreach(_lib IN LISTS _libs)
              COMMAND nm -ACD --defined-only ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib${_lib}.so)
   endif()
 endforeach()
+
+add_test(NAME main_test
+         COMMAND main)

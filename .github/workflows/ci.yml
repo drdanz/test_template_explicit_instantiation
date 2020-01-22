@@ -159,6 +159,15 @@ jobs:
     - name: Run tests
       shell: cmake -P {0}
       run: |
+        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
+          file(STRINGS environment_script_output.txt output_lines)
+          foreach(line IN LISTS output_lines)
+            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+              set(ENV{${CMAKE_MATCH_1} } "${CMAKE_MATCH_2}")
+            endif()
+          endforeach()
+        endif()
+
         execute_process(
           COMMAND ${CMAKE_CTEST_COMMAND}
             -VV
