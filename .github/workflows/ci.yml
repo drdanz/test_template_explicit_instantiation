@@ -88,16 +88,44 @@ jobs:
         endforeach()
         endif()
 
+        set(_generator)
+        if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
+          set(_generator -G "${{ matrix.config.cmake_generator }}")
+        endif()
+
+        set(_toolset)
+        if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
+          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+        endif()
+
+        set(_platform)
+        if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
+          list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
+        endif()
+
+        set(_initial_cache_file)
+        if(NOT "${{ matrix.config.cmake_initial_cache_file }}" STREQUAL "")
+          set(_initial_cache_file -C "${{ matrix.config.cmake_initial_cache_file }}"
+        endif()
+
+        set(_toolchain_file)
+        if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
+          set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
+        endif()
+
+        set(_build_type)
+        if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
+          set(build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
         execute_process(
           COMMAND ${CMAKE_COMMAND}
             -S .
             -B build
-            -G "${{ matrix.config.cmake_generator }}"
-            -T ${{ matrix.config.cmake_toolset }}
-            -A ${{ matrix.config.cmake_platform }}
-            -C "${{ matrix.config.cmake_initial_cache_file }}"
-            -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }}
-            -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+            ${_generator}
+            ${_toolset}
+            ${_platform}
+            ${_initial_cache_file}
+            ${_toolchain_file}
+            ${_build_type}
             -D YARP_COMPILE_TESTS:BOOL=ON
           RESULT_VARIABLE result
         )
